@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>光韵智控 | 巴法云灯光调节系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: radial-gradient(circle at 20% 30%, #0b1120, #03060f);
+            font-family: 'Inter', sans-serif;
+            padding: 20px 16px 40px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .glass-container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 48px;
+            background: rgba(12, 20, 30, 0.55);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(72, 187, 255, 0.25);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(0, 255, 255, 0.1) inset;
+            overflow: hidden;
+        }
+        .system-header {
+            padding: 24px 24px 16px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.08), rgba(0, 80, 120, 0.2));
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        .title {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #e0f0ff, #7bc5ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .status-badge {
+            background: rgba(0, 200, 200, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #a0f0ff;
+            border: 0.5px solid rgba(0, 255, 200, 0.5);
+        }
+        .topic-info {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: #8aaec0;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-family: monospace;
+        }
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 20px 20px 12px;
+        }
+        .stat-card {
+            background: rgba(0, 20, 30, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 14px 16px;
+            flex: 1;
+            min-width: 110px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            color: #9bc6e6;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f0fcff;
+            line-height: 1;
+        }
+        .stat-unit {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #7da5c0;
+        }
+        .curtain-status {
+            background: rgba(10, 40, 50, 0.7);
+            border-radius: 28px;
+            padding: 12px 16px;
+            margin: 0 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(0, 230, 200, 0.3);
+        }
+        .curtain-text {
+            font-weight: 500;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .curtain-icon {
+            font-size: 1.6rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            padding: 0 20px 20px;
+        }
+        .ctrl-btn {
+            flex: 1;
+            background: rgba(20, 40, 55, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 60px;
+            padding: 12px 0;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ddf4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .ctrl-btn:active {
+            transform: scale(0.96);
+            background: rgba(0, 160, 200, 0.7);
+            border-color: #0ff;
+        }
+        .wifi-control-panel {
+            margin: 8px 20px 25px;
+            background: linear-gradient(145deg, rgba(0, 30, 45, 0.7), rgba(0, 15, 25, 0.8));
+            border-radius: 44px;
+            padding: 18px 20px;
+            border: 1px solid rgba(0, 200, 255, 0.5);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #7fe0ff;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+        }
+        .brightness-control {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        input[type="range"] {
+            flex: 3;
+            height: 6px;
+            background: linear-gradient(90deg, #00ccff, #ffdd77);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 8px cyan;
+            cursor: pointer;
+        }
+        .brightness-number {
+            flex: 1;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #0ff;
+            border-radius: 34px;
+            padding: 8px 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #fff;
+            font-size: 1rem;
+            width: 80px;
+        }
+        input.brightness-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid cyan;
+            color: white;
+            border-radius: 30px;
+            padding: 8px 12px;
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .send-brightness-btn {
+            background: #0c6b7c;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 18px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .send-brightness-btn:active {
+            transform: scale(0.96);
+            background: #0aa;
+        }
+        .mode-hint {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 10px;
+            color: #ffcf9a;
+        }
+        .other-mode-message {
+            margin: 8px 20px 25px;
+            background: rgba(255, 100, 50, 0.12);
+            border-radius: 28px;
+            padding: 14px 18px;
+            border-left: 4px solid #ffaa66;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffddbb;
+            font-size: 0.8rem;
+        }
+        .footer-note {
+            padding: 18px 20px 22px;
+            font-size: 0.65rem;
+            text-align: center;
+            color: #4f7e95;
+            border-top: 0.5px solid rgba(0, 255, 255, 0.2);
+            background: rgba(0,0,0,0.2);
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0a1e2ae6;
+            backdrop-filter: blur(16px);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #bbffff;
+            font-size: 0.8rem;
+            z-index: 1000;
+            pointer-events: none;
+            transition: 0.2s;
+            border: 1px solid cyan;
+            white-space: nowrap;
+        }
+        i {
+            font-size: 1rem;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; text-shadow: 0 0 3px cyan; }
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px cyan;
+            animation: pulse 1s infinite alternate;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <div class="system-header">
+        <div class="title">
+            <h1><i class="fas fa-lightbulb"></i> 光韵智控</h1>
+            <div class="status-badge"><span class="live-dot"></span> 巴法云实时</div>
+        </div>
+        <div class="topic-info">
+            <span><i class="fas fa-key"></i> UID: 28449f8***</span>
+            <span><i class="fas fa-database"></i> 数据: dianxledshuju</span>
+            <span><i class="fas fa-paper-plane"></i> 控制: dianxledctrl</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-microchip"></i> 当前模式</div>
+            <div class="stat-value" id="modeValue">--</div>
+            <div class="stat-unit" id="modeName">等待数据</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-chart-line"></i> 输出占空比</div>
+            <div class="stat-value" id="dutyValue">0<span class="stat-unit">%</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-sun"></i> 环境反馈亮度</div>
+            <div class="stat-value" id="envLux">0<span class="stat-unit">lx</span></div>
+        </div>
+    </div>
+
+    <div class="curtain-status">
+        <div class="curtain-text"><i class="fas fa-blinds curtain-icon"></i> 窗帘状态</div>
+        <div class="stat-value" id="curtainState" style="font-size: 1.4rem;">--</div>
+    </div>
+
+    <div class="action-buttons">
+        <div class="ctrl-btn" id="btnCurtainClose"><i class="fas fa-window-close"></i> 关闭窗帘</div>
+        <div class="ctrl-btn" id="btnCurtainOpen"><i class="fas fa-blinds-open"></i> 打开窗帘</div>
+        <div class="ctrl-btn" id="btnModeSwitch"><i class="fas fa-sync-alt"></i> 模式切换</div>
+    </div>
+
+    <div id="wifiPanel" class="wifi-control-panel" style="display: none;">
+        <div class="panel-title"><i class="fas fa-wifi"></i> WiFi 亮度精确控制</div>
+        <div class="brightness-control">
+            <div class="slider-container">
+                <i class="fas fa-moon" style="color:#7fc9ff;"></i>
+                <input type="range" id="brightnessSlider" min="0" max="100" value="50" step="1">
+                <i class="fas fa-sun" style="color:#ffd966;"></i>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 0.8rem;">亮度值</span>
+                    <input type="number" id="brightnessNumber" class="brightness-input" min="0" max="100" step="1" value="50">
+                </div>
+                <div class="send-brightness-btn" id="sendBrightnessCmd">
+                    <i class="fas fa-paper-plane"></i> 下发亮度
+                </div>
+            </div>
+            <div class="mode-hint"><i class="fas fa-info-circle"></i> 指令格式 #亮度#控制变量#  控制变量保持上次按钮状态</div>
+        </div>
+    </div>
+
+    <div id="otherModeHint" class="other-mode-message" style="display: none;">
+        <i class="fas fa-microphone-alt" style="font-size: 1.3rem;"></i>
+        <span id="otherModeText">当前为语音控制模式，亮度调节需切换至WiFi模式(模式0)</span>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-cloud-upload-alt"></i> 数据轮询200ms · 解析规则 #模式#占空比#环境亮度#窗帘数值# (数值>0为打开)
+    </div>
+</div>
+<div id="toast" class="toast-msg" style="opacity:0; visibility: hidden;"></div>
+
+<script>
+    // ---------- 巴法云固定配置 ----------
+    const UID = "28449f804baf4a4a87efedc38a9e60ac";
+    const DATA_TOPIC = "dianxledshuju";
+    const CTRL_TOPIC = "dianxledctrl";
+
+    // 传感器数据
+    let currentMode = -1;          // 0~4
+    let currentDuty = 0;           // 输出占空比 0-100
+    let currentEnvLight = 0;        // 环境反馈亮度
+    let currentCurtainOpen = false;  // 窗帘状态
+
+    // 用户下发参数 (独立维护)
+    let currentBrightness = 50;     // 当前待下发的亮度值 0-100
+    let currentCtrlVar = "0";       // 当前控制变量，默认"0"，按钮会改为a1/a2/a3
+
+    let pollingInterval = null;
+
+    // DOM 元素
+    const modeValueEl = document.getElementById("modeValue");
+    const modeNameEl = document.getElementById("modeName");
+    const dutyValueEl = document.getElementById("dutyValue");
+    const envLuxEl = document.getElementById("envLux");
+    const curtainStateEl = document.getElementById("curtainState");
+    const wifiPanel = document.getElementById("wifiPanel");
+    const otherHint = document.getElementById("otherModeHint");
+    const otherModeTextSpan = document.getElementById("otherModeText");
+    const brightnessSlider = document.getElementById("brightnessSlider");
+    const brightnessNumber = document.getElementById("brightnessNumber");
+    const sendBrightnessBtn = document.getElementById("sendBrightnessCmd");
+
+    // 通用提示
+    function showToast(message, isError = false) {
+        const toast = document.getElementById("toast");
+        toast.style.visibility = "visible";
+        toast.style.opacity = "1";
+        toast.innerText = message;
+        toast.style.background = isError ? "#aa2e2ed9" : "#0a2a3ae6";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.visibility = "hidden";
+        }, 2000);
+    }
+
+    // 模式名称映射
+    function getModeInfo(mode) {
+        const map = {
+            0: { name: "WiFi控制", icon: "wifi", hint: "手动调节亮度滑块生效" },
+            1: { name: "语音控制", icon: "microphone-alt", hint: "语音唤醒调节，当前无亮度滑块" },
+            2: { name: "手动模拟调节", icon: "sliders-h", hint: "模拟旋钮调节，请使用物理设备" },
+            3: { name: "手动数字调节", icon: "keyboard", hint: "数字面板调节，暂未开放本地组件" },
+            4: { name: "PID反馈调节", icon: "chart-line", hint: "自动闭环调节亮度" }
+        };
+        return map[mode] || { name: "未知模式", icon: "question", hint: "等待数据同步" };
+    }
+
+    // 更新UI：模式相关展示 + 窗帘 + 占空比/环境亮度
+    function updateUIByMode() {
+        const modeInfo = getModeInfo(currentMode);
+        modeValueEl.innerText = currentMode !== -1 ? currentMode : "--";
+        modeNameEl.innerText = modeInfo.name;
+        dutyValueEl.innerHTML = `${currentDuty}<span class="stat-unit">%</span>`;
+        envLuxEl.innerHTML = `${currentEnvLight}<span class="stat-unit">lx</span>`;
+        curtainStateEl.innerHTML = currentCurtainOpen ? 
+            '<i class="fas fa-blinds-open"></i> 已打开' : 
+            '<i class="fas fa-blinds"></i> 已关闭';
+        
+        if (currentMode === 0) {
+            wifiPanel.style.display = "block";
+            otherHint.style.display = "none";
+        } else {
+            wifiPanel.style.display = "none";
+            otherHint.style.display = "flex";
+            otherModeTextSpan.innerHTML = `当前为${modeInfo.name}模式 · ${modeInfo.hint}，如需亮度调节请发送“模式切换”指令(a3)切换至WiFi模式(0)`;
+        }
+    }
+
+    // 核心发送函数：构造 #亮度#控制变量# 并发送至巴法云
+    async function sendCommand(brightness, ctrlVar, descSuffix = "") {
+        let brightVal = Math.min(100, Math.max(0, Number(brightness)));
+        if (isNaN(brightVal)) brightVal = 0;
+        const cmdMsg = `#${brightVal}#${ctrlVar}#`;
+        const url = "https://apis.bemfa.com/va/postmsg";
+        const params = new URLSearchParams();
+        params.append("uid", UID);
+        params.append("topic", CTRL_TOPIC);
+        params.append("type", "3");
+        params.append("msg", cmdMsg);
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: params
+            });
+            const result = await response.json();
+            if (result.code === 0 || result.msg === "success" || response.ok) {
+                showToast(`✅ 指令已下发 ${descSuffix}: ${cmdMsg}`);
+                return true;
+            } else {
+                showToast(`⚠️ 发送失败: ${result.msg || "未知错误"}`, true);
+                return false;
+            }
+        } catch (err) {
+            console.error("发送指令错误", err);
+            showToast(`❌ 网络错误，发送失败`, true);
+            return false;
+        }
+    }
+
+    // 单独下发亮度 (使用当前保存的控制变量)
+    async function sendCurrentBrightness() {
+        await sendCommand(currentBrightness, currentCtrlVar, `亮度=${currentBrightness} 控制变量=${currentCtrlVar}`);
+    }
+
+    // 三个按钮动作：更新控制变量，发送指令（亮度保持当前值）
+    async function onCurtainClose() {
+        currentCtrlVar = "a1";
+        await sendCommand(currentBrightness, currentCtrlVar, "窗帘关闭");
+    }
+    async function onCurtainOpen() {
+        currentCtrlVar = "a2";
+        await sendCommand(currentBrightness, currentCtrlVar, "窗帘打开");
+    }
+    async function onModeSwitch() {
+        currentCtrlVar = "a3";
+        await sendCommand(currentBrightness, currentCtrlVar, "模式切换");
+    }
+
+    // ---------- 数据解析: #模式#输出占空比#环境反馈亮度#窗帘是否打开# ----------
+    function parseSensorData(rawMsg) {
+        if (!rawMsg || typeof rawMsg !== "string") return false;
+        let trimmed = rawMsg.trim();
+        if (!trimmed.startsWith("#") || !trimmed.endsWith("#")) {
+            console.warn("格式错误, 缺少边界#", trimmed);
+            return false;
+        }
+        const content = trimmed.slice(1, -1);
+        const parts = content.split("#");
+        if (parts.length < 4) {
+            console.warn("数据字段不足4个", parts);
+            return false;
+        }
+        const modeNum = parseInt(parts[0], 10);
+        const duty = parseInt(parts[1], 10);
+        const envBright = parseInt(parts[2], 10);
+        let curtainVal = parseFloat(parts[3]);
+        if (isNaN(curtainVal)) curtainVal = 0;
+        const curtainOpen = curtainVal > 0;
+        
+        if (!isNaN(modeNum)) currentMode = modeNum;
+        if (!isNaN(duty)) currentDuty = duty;
+        if (!isNaN(envBright)) currentEnvLight = envBright;
+        currentCurtainOpen = curtainOpen;
+        
+        updateUIByMode();
+        return true;
+    }
+
+    // 从巴法云获取数据
+    async function fetchBemfaData() {
+        const url = `https://apis.bemfa.com/va/getmsg?uid=${UID}&topic=${DATA_TOPIC}&type=3&num=1`;
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            if (json && json.data && json.data.length > 0 && json.data[0].msg) {
+                const rawMsg = json.data[0].msg;
+                parseSensorData(rawMsg);
+            }
+        } catch (err) {
+            console.error("拉取巴法云数据失败", err);
+        }
+    }
+
+    // 绑定亮度控件：滑块与数字输入双向同步，并更新 currentBrightness
+    function bindBrightnessControls() {
+        brightnessSlider.addEventListener("input", (e) => {
+            const val = parseInt(e.target.value, 10);
+            brightnessNumber.value = val;
+            currentBrightness = val;
+        });
+        brightnessNumber.addEventListener("input", (e) => {
+            let val = parseInt(e.target.value, 10);
+            if (isNaN(val)) val = 0;
+            val = Math.min(100, Math.max(0, val));
+            brightnessSlider.value = val;
+            brightnessNumber.value = val;
+            currentBrightness = val;
+        });
+        sendBrightnessBtn.addEventListener("click", async () => {
+            if (currentMode !== 0) {
+                showToast("当前非WiFi控制模式，无法手动下发亮度，请先切换模式至0", true);
+                return;
+            }
+            // 确保 currentBrightness 与控件同步（已经实时更新）
+            await sendCurrentBrightness();
+        });
+    }
+
+    // 绑定三大按钮 (使用独立函数)
+    function bindActionButtons() {
+        document.getElementById("btnCurtainClose").addEventListener("click", () => onCurtainClose());
+        document.getElementById("btnCurtainOpen").addEventListener("click", () => onCurtainOpen());
+        document.getElementById("btnModeSwitch").addEventListener("click", () => onModeSwitch());
+    }
+
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        fetchBemfaData();
+        pollingInterval = setInterval(() => {
+            fetchBemfaData();
+        }, 200);
+    }
+
+    function initDisplay() {
+        currentMode = -1;
+        currentDuty = 0;
+        currentEnvLight = 0;
+        currentCurtainOpen = false;
+        currentBrightness = 50;
+        currentCtrlVar = "0";
+        // 同步滑块显示
+        brightnessSlider.value = 50;
+        brightnessNumber.value = 50;
+        updateUIByMode();
+        modeValueEl.innerText = "--";
+        modeNameEl.innerText = "等待数据";
+        dutyValueEl.innerHTML = "0<span class='stat-unit'>%</span>";
+        envLuxEl.innerHTML = "0<span class='stat-unit'>lx</span>";
+        curtainStateEl.innerHTML = '<i class="fas fa-question-circle"></i> 未知';
+    }
+
+    window.addEventListener("load", () => {
+        initDisplay();
+        bindBrightnessControls();
+        bindActionButtons();
+        startPolling();
+        showToast("系统已启动 | 指令格式 #亮度#控制变量#", false);
+        setTimeout(() => fetchBemfaData(), 100);
+    });
+
+    window.addEventListener("beforeunload", () => {
+        if (pollingInterval) clearInterval(pollingInterval);
+    });
+</script>
+</body>
+</html>
